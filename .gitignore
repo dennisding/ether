@@ -87,3 +87,7 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# local files
+ether.prj
+ether.HIH-D-2369.dennisding.pui
