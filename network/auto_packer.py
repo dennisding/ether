@@ -1,7 +1,7 @@
 # -*- encoding:utf-8 -*-
 
 import struct
-import packer
+from . import packer
 
 # basic types
 TYPE_INT = 1

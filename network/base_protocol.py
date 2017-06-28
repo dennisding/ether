@@ -1,6 +1,6 @@
 # -*- encoding:utf-8 -*-
 
-from protocol import protocol, pdef, pret
+from .protocol import protocol, pdef, pret
 
 check_signature = protocol(
 	pdef('Str', 'local_sign'),

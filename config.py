@@ -1,11 +1,28 @@
 # -*- encoding:utf-8 -*-
 
-# for udp broadcast
-game_mgr_port = 1000
-gate_port = 1001
-game_port = 1002
-dbmgr_port = 1003
+gate1 = {
+	'port' :4000,
+	'name' : 'gate1',
+	'gid' : 1,
+}
 
-game_port_range = [2000, 2999]
-dbmgr_port_range = [3000, 3999]
-gate_port_range = [4000, 4999]
+gate2 = {
+	'port' : 4001,
+	'name' : 'gate2',
+	'gid' : 2,
+}
+
+game1 = {
+	'port_for_gate': 5000,
+	'port_for_game' : 6000,
+	'name' : 'game1',
+	'gid' : 3,
+}
+
+common = {
+
+}
+
+active_gates = [gate1, gate2]
+active_games = [game1]
+active_dbmgrs = []

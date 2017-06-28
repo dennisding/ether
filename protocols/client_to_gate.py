@@ -1,14 +1,20 @@
 # -*- encoding:utf-8 -*-
 
-from ..network.protocol import Service, protocol, pdef, pret
+from network.protocol import protocol, pdef, pret
+from network import service
 
-class ClientToGate(Service):
-	check = protocols(
-		pdef('Str', 'local_sign'),
-		pdef('Str', 'remote_sign')
+class ClientToGate:
+	check = protocol(
+		pdef('Str', 'name'),
+		pdef('Str', 'password')
 	)
 
 	login = protocol(
 		pdef('Str', 'name'),
 		pdef('Str', 'password')
+	)
+
+	msg_to_game = protocol(
+		pdef('Str', 'eid'),
+		pdef('Bool', 'data')
 	)

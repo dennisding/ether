@@ -1,10 +1,8 @@
 # -*- encoding:utf-8 -*-
 
-event_loop = None
-
+_args = None
 _config = None
 _server = None
-_event_loop = None
 
 def init():
 	pass
@@ -15,5 +13,5 @@ def config():
 def server():
 	return _server
 
-def event_loop():
-	return _event_loop
+def args():
+	return _args

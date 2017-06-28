@@ -6,7 +6,8 @@
 
 import re
 import asyncio
-import connection
+
+from . import filters
 
 # server options, udp, zip, raw
 
@@ -21,12 +22,14 @@ class Remote:
 		return _fun
 
 class Connection:
-	def __init__(self, delegate, cid, master, options):
+	def __init__(self, delegate, cid, master, options, send_service, receive_service):
 		self.delegate = delegate
 		self.cid = cid
 		self.master = master
 		self.options = options
 		self.transport = None
+		self.send_service = send_service
+		self.receive_service = receive_service
 
 		self.remote = Remote(self)
 
@@ -36,31 +39,31 @@ class Connection:
 		self.send_filter, self.receive_filter = filters.gen_filters(options)
 
 	def connection_ready(self):
-		self.delegate.connection_made()
+		self.delegate.connection_ready()
 
 	# low level connection
 	def connection_made(self, transport):
-		print('connection made!!!!!!')
 		self.transport = transport
-		self.master.connection_made(self, transport)
+		self.delegate.connection_made()
+		self.master.connection_made(self)
 
 	def connection_lost(self, exc):
 		self.master.connection_lost(self, exc)
+		self.delegate.connection_lost()
 
 		# break the cycle reference
 		self.__dict__.clear()
 
-		self.delegate.connection_lost()
-
 	def call_remote_method(self, name, *args, **kwds):
-		data = self.services.pack(name, *args, **kwds)
+		data = self.send_service.pack(name, *args, **kwds)
 
 		data = self.send_filter.filter(data)
 		self.transport.write(data)
 
 	def data_received(self, data):
+		# to do : add the log when data is invalid
 		for pack in self.receive_filter.feed(data):
-			name, args = self.services.unpack(pack)
+			name, args = self.receive_service.unpack(pack)
 
 			method = getattr(self.delegate, name, None)
 			if method:
@@ -68,13 +71,18 @@ class Connection:
 			else:
 				getattr(self, name)(*args)
 
+	def eof_received(self):
+		pass
+
 class Server:
-	def __init__(self, delegate_factory, options, services):
+	def __init__(self, delegate_factory, options, send_service, receive_service):
 		self.delegate_factory = delegate_factory
 
 		self.parse_options(options)
 
-		self.services = services
+		self.send_service = send_service
+		self.receive_service = receive_service
+		#self.services = services
 
 		self.setup_server()
 
@@ -96,7 +104,7 @@ class Server:
 				self.options.add(token)
 
 	def connection_made(self, connection):
-		print('connection made!!')
+		# to do: check the signature
 		connection.connection_ready()
 
 	def connection_lost(self, connection, exc):
@@ -104,9 +112,11 @@ class Server:
 
 	def create_connection(self):
 		cid = self.gen_cid()
+
 		delegate = self.delegate_factory()
 
-		connection = Connection(delegate, cid, self, self.options)
+		connection = Connection(delegate, cid, self, self.options, \
+									self.send_service, self.receive_service)
 		delegate.connection = connection
 		delegate.remote = connection.remote
 
@@ -135,6 +145,9 @@ if __name__ == '__main__':
 		def connection_made(self):
 			print('connection made')
 
+		def connection_ready(self):
+			print('connection ready')
+
 		def connection_lost(self):
 			print('connection lost')
 
@@ -146,7 +159,6 @@ if __name__ == '__main__':
 	s.build_protocols()
 
 	def delegate_factory():
-		print('delegate factory')
 		return Delegate()
 
 	server = Server(delegate_factory, 'zip pack, big', s)

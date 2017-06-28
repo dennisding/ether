@@ -1,6 +1,6 @@
 # -*- encoding:utf-8 -*-
 
-import auto_packer
+from . import auto_packer
 
 class protocol:
 	def __init__(self, *defines):

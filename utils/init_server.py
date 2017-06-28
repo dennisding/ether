@@ -5,16 +5,30 @@ import asyncio
 
 import engine
 
-def setup_config(config_file):
-	content = open(config_file).read()
+def setup_config():
+	args = engine.args()
 
-	config = {}
-	exec(content, config)
+	with open(args.config) as f:
+		content = f.read()
+		config = {}
+		exec(content, config)
 
-	engine._config = config
+		# setup common
+		result = dict(config[args.name])
+		result['name'] = args.name
 
-def setup_event_loop():
-	engine._event_loop = asyncio.get_event_loop()
+		def add_config(configs):
+			for key, value in configs.items():
+				if key not in result and key != '__builtins__':
+					result[key] = value
 
-def init_server(config_file):
-	setup_config(config_file)
+		add_config(config.get('common', {}))
+		add_config(config)
+
+		engine._config = result
+
+def init_server(args):
+	# setup the args
+	engine._args = args
+
+	setup_config()

@@ -9,8 +9,8 @@ def format_packer(packer):
 	return packer
 
 class TypeBase:
-	format = ''
-	size = 0
+#	format = ''
+#	size = 0
 
 	def pack_into(self, buff_list, value):
 		buff_list.append(struct.pack(self.format, value))

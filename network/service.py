@@ -3,9 +3,9 @@
 import asyncio
 import hashlib
 
-import protocol
-import auto_packer
-import base_protocol
+from . import protocol
+from . import auto_packer
+from . import base_protocol
 
 INDEX_TYPE = 'ShortInt'
 
@@ -96,10 +96,12 @@ class Service:
 	def pack(self, name, *args, **kwds):
 		protocol = self.name_to_protocols[name]
 
+		data = protocol.pack(*args, **kwds)
 		return protocol.pack(*args, **kwds)
 
 	def unpack(self, data):
+		result = self.index_packer.unpack(data)
 		index = self.index_packer.unpack(data)[0]
 		protocol = self.index_to_protocols[index]
 
-		return protocol.unpack(data)
+		return protocol.name, protocol.unpack(data)
