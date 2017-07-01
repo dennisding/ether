@@ -1,0 +1,8 @@
+
+1. client connect to gate
+2. gate send client_connected to game
+3. game create the login entity
+4. if entity is LocalEntity:
+		game send entity_created to current gate
+	else:
+		game send entity_created to all gates and games

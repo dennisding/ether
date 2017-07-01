@@ -9,7 +9,7 @@ if __name__ == '__main__':
 	signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 	args = argparser.parse_args()
-	print('args', args)
+	print('args:', args)
 
 	init_server.init_server(args)
 
@@ -18,6 +18,15 @@ if __name__ == '__main__':
 
 		g = gate.Gate()
 		g.serve()
+	elif args.type == 'game':
+		from game import game
+		g = game.Game()
+		g.serve()
+	elif args.type == 'client':
+		from client import client
+
+		c = client.Client()
+		c.start()
 
 #import sys
 #

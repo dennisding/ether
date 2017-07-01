@@ -109,7 +109,6 @@ if __name__ == '__main__':
 	class Delegate:
 		def connection_made(self):
 			print('client connection made!')
-			#self.remote.login('dennis', 'dennis')
 
 		def connection_lost(self):
 			print('client connection lost!!!')

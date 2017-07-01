@@ -3,11 +3,15 @@
 import asyncio
 import hashlib
 
-from . import protocol
+from .protocol import protocol, pdef
 from . import auto_packer
-from . import base_protocol
 
 INDEX_TYPE = 'ShortInt'
+
+check_signature = protocol(
+	pdef('Str', 'local_sign'),
+	pdef('Str', 'remote_sign')
+)
 
 class Protocol:
 	def __init__(self, name, index, protocol):
@@ -65,8 +69,7 @@ class Service:
 		self.signature = digest.digest()
 
 	def add_base_protocols(self, digest):
-		self.add_protocol('_check_signature', base_protocol.check_signature, digest)
-		self.add_service(base_protocol.BaseMsg(), digest)
+		self.add_protocol('_check_signature', check_signature, digest)
 
 	def add_service(self, service, digest):
 		service = type(service)
@@ -78,7 +81,7 @@ class Service:
 
 		for name in names:
 			value = getattr(service, name)
-			if isinstance(value, protocol.protocol):
+			if isinstance(value, protocol):
 				self.add_protocol(name, value, digest)
 
 	def add_protocol(self, name, protocol, digest):
@@ -105,3 +108,9 @@ class Service:
 		protocol = self.index_to_protocols[index]
 
 		return protocol.name, protocol.unpack(data)
+
+def gen_service(*services):
+	s = Service(*services)
+	s.build_protocols()
+
+	return s

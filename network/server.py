@@ -91,6 +91,9 @@ class Server:
 		self.last_cid = 0
 		self.port = 0
 
+	def get_connection(self, cid):
+		return self.connections.get(cid)
+
 	def gen_cid(self):
 		self.last_cid = self.last_cid + 1
 		return self.last_cid
@@ -112,13 +115,13 @@ class Server:
 
 	def create_connection(self):
 		cid = self.gen_cid()
-
 		delegate = self.delegate_factory()
 
 		connection = Connection(delegate, cid, self, self.options, \
 									self.send_service, self.receive_service)
 		delegate.connection = connection
 		delegate.remote = connection.remote
+		delegate.cid = cid
 
 		self.connections[connection.cid] = connection
 

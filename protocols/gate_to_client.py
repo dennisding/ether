@@ -2,8 +2,6 @@
 
 from network.protocol import protocol, pdef, pret
 
-from network import service
-
 class GateToClient:
 	login = protocol(
 		pdef('Bool', 'is_ok'),
