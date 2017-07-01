@@ -18,7 +18,6 @@ def extract_gadgets(namespace, funcs, items):
 
 def gather_component_gadgets(namespace, funcs, components):
 	for component in components:
-		# load the component methods
 		tokens = component.split('.')
 		module_name = '.'.join(tokens[:-1])
 		component_name = tokens[-1]
