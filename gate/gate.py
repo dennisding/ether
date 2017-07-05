@@ -27,6 +27,9 @@ class Gate:
 		self.game_mgr = game_mgr.GameMgr()
 		self.game_mgr.serve()
 
+	def get_client(self, cid):
+		return self.client_mgr.get_client(cid)
+
 	def run_forever(self):
 		loop = asyncio.get_event_loop()
 		loop.run_forever()

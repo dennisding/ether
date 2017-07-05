@@ -4,6 +4,7 @@ _args = None
 _config = None
 _game_config = None
 _server = None
+_client = None
 
 def init():
 	pass
@@ -16,6 +17,9 @@ def game_config():
 
 def server():
 	return _server
+
+def client():
+	return _client
 
 def args():
 	return _args

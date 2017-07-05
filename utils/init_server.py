@@ -3,7 +3,6 @@
 import sys
 import engine
 import asyncio
-import pathlib
 
 import engine
 
@@ -13,9 +12,6 @@ def setup_game_config():
 		config = {}
 		exec(content, config)
 		engine._game_config = config
-
-	path = pathlib.Path(engine.game_config()['entity_path'])
-	sys.path.insert(0, str(path.resolve()))
 
 def setup_config():
 	args = engine.args()

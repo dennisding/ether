@@ -27,6 +27,9 @@ class Connection:
 		game = server.game_mgr.get_free_game()
 		game.remote.client_connected(server.gid, self.cid)
 
+	def create_client_entity(self, eid, name):
+		print('create client entity', eid)
+
 class ClientMgr:
 	def __init__(self):
 		pass
@@ -40,3 +43,6 @@ class ClientMgr:
 							config['net_option'], client_service, gate_service)
 
 		self.server.start(config['cport'])
+
+	def get_client(self, cid):
+		return self.server.get_connection(cid)

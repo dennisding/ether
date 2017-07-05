@@ -79,7 +79,8 @@ class Client(asyncio.Protocol):
 	def connection_made(self, transport):
 		self.transport = transport
 
-		self.delegate.remote = Remote(self)
+		self.remote = Remote(self)
+		self.delegate.remote = self.remote
 
 		self.delegate.connection_made()
 		# to do: check the signature
@@ -87,6 +88,9 @@ class Client(asyncio.Protocol):
 
 	def connection_lost(self, exc):
 		self.delegate.connection_lost()
+
+		# break the recycyle reference
+		self.__dict__.clear()
 
 	def data_received(self, data):
 		for package in self.receive_filter.feed(data):

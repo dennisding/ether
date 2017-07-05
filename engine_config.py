@@ -19,8 +19,7 @@ game1 = {
 	'gid' : 3,
 }
 
-client = {
-
+client1 = {
 }
 
 dbmgr1 = {

@@ -22,6 +22,12 @@ class Connection:
 	def connection_ready(self):
 		print('game connection ready')
 
+	def create_client_entity(self, cid, eid, name):
+		print('create client entity', cid, eid, name)
+
+		client = engine.server().get_client(cid)
+		client.remote.create_client_entity(eid, name)
+
 class GameMgr:
 	def __init__(self):
 		self.games = {} # {gid: cid}

@@ -1,8 +1,14 @@
 # -*- encoding:utf-8 -*-
 
+import sys
 import engine
 import random
+import pathlib
 import asyncio
+
+from . import entity
+
+from utils import entity_mgr
 
 from network import client
 from network import service
@@ -23,9 +29,27 @@ class Connection:
 	def connection_ready(self):
 		print('connection ready')
 
+	def create_client_entity(self, eid, name):
+		print('create client entity', eid, name)
+
+		entity_mgr = engine.client().entity_mgr
+		entity_mgr.create_entity(name, eid = eid)
+
 class Client:
 	def __init__(self):
-		pass
+		engine._client = self
+		self.prepare_environment()
+		self.setup_entity_mgr()
+
+	def prepare_environment(self):
+		path = pathlib.Path(engine.game_config()['client_entity_path'])
+		sys.path.insert(0, str(path.resolve()))
+
+	def setup_entity_mgr(self):
+		self.entity_mgr = entity_mgr.EntityMgr()
+
+		entity_path = engine.game_config()['client_entity_path']
+		self.entity_mgr.load_entities(entity_path, entity.Entity)
 
 	def connect_to_gate(self):
 		client_service = service.gen_service(gate_to_client.GateToClient())
@@ -39,10 +63,8 @@ class Client:
 		# connect to gate 1
 		self.client.connect(gate['ip'], gate['cport'])
 
-	def run_forever(self):
-		loop = asyncio.get_event_loop()
-		loop.run_forever()
-
 	def start(self):
 		self.connect_to_gate()
-		self.run_forever()
+
+		loop = asyncio.get_event_loop()
+		loop.run_forever()

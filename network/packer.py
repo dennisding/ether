@@ -62,9 +62,46 @@ class Str:
 	def unpack(self, data, offset = 0):
 		size = struct.unpack_from(self.size_format, data, offset)[0]
 		offset = offset + self.size_size
-		result = struct.unpack_from('%ss'%(size), data, offset)
+		# result = struct.unpack_from('%ss'%(size), data, offset)
 
-		return offset + size, result[0].decode()
+		# return offset + size, result[0].decode()
+		return offset + size, data[offset:offset + size].decode()
+
+class FixedStr:
+	def __init__(self, size):
+		self.size = size
+
+	def pack_info(self, buff_list, value):
+		assert(len(value) == self.size)
+		buff_list.append(value.encode())
+
+	def unpack(self, data, offset = 0):
+		return offset + self.size, data[offset : offset + self.size].decode()
+
+class Bytes:
+	size_format = 'I'
+	size_size = struct.calcsize(size_format)
+
+	def pack_into(self, buff_list, value):
+		buff_list.append(struct.pack(self.size_format, len(value)))
+		buff_list.append(value)
+
+	def unpack(self, data, offset = 0):
+		size = struct.unpack_from(self.size_format, data, offset)[0]
+		offset = offset + self.size_size
+
+		return offset + size, data[offset:offset + size]
+
+class FixedBytes:
+	def __init__(self, size):
+		self.size = size
+
+	def pack_info(self, buff_list, value):
+		assert(len(value) == self.size)
+		buff_list.append(value)
+
+	def unpack(self, data, offset = 0):
+		return offset + self.size, data[offset:offset + self.size]
 
 class List:
 	size_format = 'h'
@@ -168,6 +205,13 @@ class packer:
 def compile(format):
 	code = 'packer(%s)'%(format)
 	return eval(code)
+
+def alias(alias_name, name):
+	g = globals()
+	assert alias_name not in g
+	g[alias_name] = eval(name)
+
+alias('Eid', 'Int()')
 
 if __name__ == '__main__':
 	pk = compile('Int, Str, List(Float), Set(Str), Map(Int, Str), Int')

@@ -3,4 +3,8 @@
 from network.protocol import protocol, pdef, pret
 
 class GameToGate:
-	pass
+	create_client_entity = protocol(
+		pdef('Eid', 'eid'),
+		pdef('Int', 'cid'),
+		pdef('Str', 'name'),
+	)

@@ -1,4 +1,4 @@
 # -*- coding:utf-8 -*-
 
 def init():
-	pass
+	print('run main.init')

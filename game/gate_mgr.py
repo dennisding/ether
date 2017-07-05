@@ -2,8 +2,6 @@
 
 import engine
 
-from . import entity_mgr
-
 from network import client
 from network import service
 
@@ -26,13 +24,16 @@ class Connection:
 		self.gate_mgr.gate_ready(self.gid)
 
 	def client_connected(self, gateid, cid):
+		# 1. create entity
+		# 2. bind the entity to client
 		print('client connected!!!', gateid, cid)
 		entity_mgr = engine.server().entity_mgr
 
 		connect_entity = engine.game_config()['connect_entity']
-		entity = entity_mgr.create_entity(None, connect_entity, {})
-		# 1. create entity
-		# 2. bind the entity to client
+		eid = entity_mgr.create_entity(connect_entity)
+
+		entity = entity_mgr.get_entity(eid)
+		entity.set_client(gateid, cid)
 
 class GateMgr:
 	def __init__(self):
@@ -42,6 +43,9 @@ class GateMgr:
 	def gate_ready(self, gid):
 		client = self.connecting.pop(gid)
 		self.clients[gid] = client
+
+	def get_gate(self, gid):
+		return self.clients[gid]
 
 	def connect_gates(self):
 		gate_service = service.gen_service(game_to_gate.GameToGate())

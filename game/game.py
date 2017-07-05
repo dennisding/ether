@@ -1,17 +1,23 @@
 # -*- coding:utf-8 -*-
 
+import sys
+import pathlib
 import asyncio
 import engine
 
+from . import entity
 from . import gate_mgr
 from . import game_mgr
-from . import entity_mgr
+
+from utils import entity_mgr
 
 class Game:
 	def __init__(self):
 		engine._server = self
 
 	def serve(self):
+		self.prepare_environment()
+		self.run_init_function()
 		self.setup_entity_mgr()
 
 		self.gate_mgr = gate_mgr.GateMgr()
@@ -22,9 +28,31 @@ class Game:
 
 		self.run_forever()
 
+	def prepare_environment(self):
+		path = pathlib.Path(engine.game_config()['entity_path'])
+		sys.path.insert(0, str(path.resolve()))
+
+	def run_init_function(self):
+		tokens = engine.game_config()['init_fun'].split('.')
+		module_name = '.'.join(tokens[:-1])
+		fun_name = tokens[-1]
+
+		__import__(module_name)
+		module = sys.modules[module_name]
+
+		getattr(module, fun_name)()
+
+	def get_gate(self, gid):
+		return self.gate_mgr.get_gate(gid)
+
+	def get_game(self, gid):
+		return self.game_mgr.get_game(gid)
+
 	def setup_entity_mgr(self):
 		self.entity_mgr = entity_mgr.EntityMgr()
-		self.entity_mgr.load_entities(engine.game_config()['entity_path'])
+		entity_path = engine.game_config()['entity_path']
+
+		self.entity_mgr.load_entities(entity_path, entity.LocalEntity)
 
 	def run_forever(self):
 		loop = asyncio.get_event_loop()
