@@ -3,6 +3,7 @@
 from . import entity_utils
 
 from utils import assemble
+from utils import swallow
 
 class EntityMeta(type):
 	def __new__(cls, name, bases, namespace, **kwds):
@@ -13,6 +14,10 @@ class EntityMeta(type):
 class LocalEntity(metaclass = EntityMeta):
 	gateid = None
 	cid = None
+
+	all_client = swallow.swallow()
+	own_client = swallow.swallow()
+	other_client = swallow.swallow()
 
 	def __init__(self):
 		pass
