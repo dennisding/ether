@@ -1,7 +1,5 @@
 # -*- encoding:utf-8 -*-
 
-from . import auto_packer
-
 class protocol:
 	def __init__(self, *defines):
 		self.parse_definitions(defines)

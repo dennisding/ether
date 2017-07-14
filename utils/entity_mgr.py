@@ -12,6 +12,7 @@ class EntityMgr:
 	def __init__(self):
 		self.type_infos = {} # { name : TypeInfos}
 		self.entities = {} # {eid:entity}
+		self.protocol_path = ''
 
 		self.last_eid = 0
 
@@ -19,21 +20,26 @@ class EntityMgr:
 		self.last_eid = self.last_eid + 1
 		return self.last_eid
 
+	def set_protocol_path(self, path):
+		self.protocol_path = path
+
 	def load_entities(self, path, BaseType):
 		path = pathlib.Path(path)
 		for name in path.iterdir():
 			if not name.is_file():
 				continue
 
-			# don't import __init__.py files
-			if name.name.startswith('_') or name.suffix != '.py':
+			if name.name == '__init__.py' or name.suffix != '.py':
 				continue
 
 			module = __import__(name.stem)
 			for name, attr in inspect.getmembers(module, inspect.isclass):
 				if issubclass(attr, BaseType):
 					assert name not in self.type_infos
-					self.type_infos[name] = TypeInfos(name, attr)
+					self.setup_type_infos(name, attr)
+
+	def setup_type_infos(self, name, attr):
+		self.type_infos[name] = TypeInfos(name, attr)
 
 	def get_entity(self, eid):
 		return self.entities.get(eid)

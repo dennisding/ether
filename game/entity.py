@@ -1,23 +1,18 @@
 # -*- coding:utf-8 -*-
 
-from . import entity_utils
+from . import clients
+from . import entity_tools
 
-from utils import assemble
 from utils import swallow
+from utils import entity_utils
 
-class EntityMeta(type):
-	def __new__(cls, name, bases, namespace, **kwds):
-		namespace = assemble.assemble_components(namespace)
-
-		return type.__new__(cls, name, bases, namespace)
-
-class LocalEntity(metaclass = EntityMeta):
+class LocalEntity(metaclass = entity_utils.EntityMeta):
 	gateid = None
 	cid = None
 
-	all_client = swallow.swallow()
+	all_clients = swallow.swallow()
 	own_client = swallow.swallow()
-	other_client = swallow.swallow()
+	other_clients = swallow.swallow()
 
 	def __init__(self):
 		pass
@@ -28,9 +23,18 @@ class LocalEntity(metaclass = EntityMeta):
 		self.gateid = gateid
 		self.cid = cid
 
+		if not (self.gateid and self.cid):
+			return
 		# create the client entity
-		if self.gateid and self.cid:
-			entity_utils.create_client_entity(self)
+		entity_tools.create_client_entity(self)
+
+		# setup clients
+		self.own_client = clients.OwnClient(self)
+		self.all_clients = clients.AllClients(self)
+		self.other_client = clients.OtherClients(self)
+
+		# become player
+		self.own_client.become_player()
 
 class Entity(LocalEntity):
 	def __init__(self):
