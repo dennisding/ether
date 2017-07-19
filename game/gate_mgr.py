@@ -23,6 +23,8 @@ class Connection:
 		print(self.gid, 'gate connection ready')
 		self.gate_mgr.gate_ready(self.gid)
 
+		self.remote.game_server_ready(self.gid)
+
 	def client_connected(self, gateid, cid):
 		# 1. create entity
 		# 2. bind the entity to client
@@ -34,6 +36,15 @@ class Connection:
 
 		entity = entity_mgr.get_entity(eid)
 		entity.set_client(gateid, cid)
+
+	def entity_msg(self, eid, data):
+		entity_mgr = engine.server().entity_mgr
+
+		entity = entity_mgr.get_entity(eid)
+		name, args = entity.type_infos.server_service.unpack(data)
+		print('entity msg', name, args)
+
+		getattr(entity, name)(*args)
 
 class GateMgr:
 	def __init__(self):

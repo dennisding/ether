@@ -3,6 +3,11 @@
 from network.protocol import protocol, pdef, pret
 
 class ClientToGate:
+	entity_msg = protocol(
+		pdef('Bytes', 'data'),
+	)
+
+	# test code
 	check = protocol(
 		pdef('Str', 'name'),
 		pdef('Str', 'password')

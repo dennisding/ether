@@ -2,16 +2,19 @@
 
 from network.protocol import protocol, pdef, pret
 
-class Account:
+class Property:
+	pass
+
+class Client:
 	become_player = protocol()
 
-	# server methods
-	login = protocol( 'server',
-		pdef('Str', 'name'),
-		pdef('Str', 'password'),
+	login_reply = protocol(
+		pdef('Bool', 'is_ok'),
 	)
 
-	# client methods
-	login_reply = protocol( 'client',
-		pdef('Bool', 'is_ok'),
+
+class Server:
+	login = protocol(
+		pdef('Str', 'name'),
+		pdef('Str', 'password'),
 	)

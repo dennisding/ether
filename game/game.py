@@ -40,7 +40,8 @@ class Game:
 		__import__(module_name)
 		module = sys.modules[module_name]
 
-		getattr(module, fun_name)()
+		fun = getattr(module, fun_name, None)
+		fun and fun()
 
 	def get_gate(self, gid):
 		return self.gate_mgr.get_gate(gid)
@@ -50,9 +51,12 @@ class Game:
 
 	def setup_entity_mgr(self):
 		self.entity_mgr = entity_mgr.EntityMgr()
-		entity_path = engine.game_config()['entity_path']
 
-		self.entity_mgr.load_entities(entity_path, entity.LocalEntity)
+		game_config = engine.game_config()
+		def_path = game_config['entity_def_path']
+		entity_path = game_config['entity_path']
+
+		self.entity_mgr.prepare_entities(def_path, entity_path, entity.LocalEntity)
 
 	def run_forever(self):
 		loop = asyncio.get_event_loop()

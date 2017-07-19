@@ -26,7 +26,7 @@ class LocalEntity(metaclass = entity_utils.EntityMeta):
 		if not (self.gateid and self.cid):
 			return
 		# create the client entity
-		entity_tools.create_client_entity(self)
+		entity_tools.create_player_client(self)
 
 		# setup clients
 		self.own_client = clients.OwnClient(self)

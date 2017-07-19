@@ -7,3 +7,8 @@ class GateToGame:
 		pdef('Int', 'gateid'),
 		pdef('Int', 'cid')
 	)
+
+	entity_msg = protocol(
+		pdef('Eid', 'eid'),
+		pdef('Bytes', 'data'),
+	)

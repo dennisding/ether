@@ -1,12 +1,14 @@
 # -*- coding:utf-8 -*-
 
+import engine
+
 class ClientBase:
 	def __init__(self, owner):
 		self.owner = owner
 
 	def __getattr__(self, name):
-		def _fun(self, *args, **kwds):
-			data = self.type_infos.protocol.pack(name, *args, **kwds)
+		def _fun(*args, **kwds):
+			data = self.owner.type_infos.client_service.pack(name, *args, **kwds)
 			self._do_send(data)
 
 		return _fun
@@ -14,21 +16,24 @@ class ClientBase:
 	def _do_send(self, data):
 		raise NotImplemented('client _do_send not implemented')
 
-class OwnClient:
+class OwnClient(ClientBase):
+	def __init__(self, owner):
+		super().__init__(owner)
+
+	def _do_send(self, data):
+		owner = self.owner
+		gate = engine.server().get_gate(owner.gateid)
+
+		gate.remote.client_msg(owner.cid, owner.eid, data)
+
+class AllClients(ClientBase):
 	def __init__(self, owner):
 		super().__init__(owner)
 
 	def _do_send(self, data):
 		pass
 
-class AllClients:
-	def __init__(self, owner):
-		super().__init__(owner)
-
-	def _do_send(self, data):
-		pass
-
-class OtherClients:
+class OtherClients(ClientBase):
 	def __init__(self, owner):
 		super().__init__(owner)
 

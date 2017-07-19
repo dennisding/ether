@@ -29,11 +29,23 @@ class Connection:
 	def connection_ready(self):
 		print('connection ready')
 
-	def create_client_entity(self, eid, name):
+	def create_player_client(self, eid, name):
 		print('create client entity', eid, name)
 
 		entity_mgr = engine.client().entity_mgr
 		entity_mgr.create_entity(name, eid = eid)
+
+		entity = entity_mgr.get_entity(eid)
+
+		entity._setup_server()
+
+	def client_msg(self, eid, data):
+		entity_mgr = engine.client().entity_mgr
+
+		entity = entity_mgr.get_entity(eid)
+
+		name, args = entity.type_infos.client_service.unpack(data)
+		getattr(entity, name)(*args)
 
 class Client:
 	def __init__(self):
@@ -48,8 +60,11 @@ class Client:
 	def setup_entity_mgr(self):
 		self.entity_mgr = entity_mgr.EntityMgr()
 
-		entity_path = engine.game_config()['client_entity_path']
-		self.entity_mgr.load_entities(entity_path, entity.Entity)
+		game_config = engine.game_config()
+		def_path = game_config['entity_def_path']
+		entity_path = game_config['client_entity_path']
+
+		self.entity_mgr.prepare_entities(def_path, entity_path, entity.Entity)
 
 	def connect_to_gate(self):
 		client_service = service.gen_service(gate_to_client.GateToClient())

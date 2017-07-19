@@ -3,11 +3,17 @@
 from network.protocol import protocol, pdef, pret
 
 class GateToClient:
-	create_client_entity = protocol(
+	create_player_client = protocol(
 		pdef('Eid', 'eid'),
-		pdef('Str', 'name')
+		pdef('Str', 'name'),
 	)
 
+	client_msg = protocol(
+		pdef('Eid', 'eid'),
+		pdef('Bytes', 'data'),
+	)
+
+	# test code
 	login = protocol(
 		pdef('Bool', 'is_ok'),
 	)

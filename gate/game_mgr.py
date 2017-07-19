@@ -22,15 +22,27 @@ class Connection:
 	def connection_ready(self):
 		print('game connection ready')
 
-	def create_client_entity(self, cid, eid, name):
+	def game_server_ready(self, gameid):
+		engine.server().game_mgr.game_ready(gameid, self.cid)
+
+	def create_player_client(self, cid, eid, name):
 		print('create client entity', cid, eid, name)
 
 		client = engine.server().get_client(cid)
-		client.remote.create_client_entity(eid, name)
+		client.remote.create_player_client(eid, name)
+
+		engine.server().setup_connection(eid, cid)
+
+	def client_msg(self, cid, eid, data):
+		client = engine.server().get_client(cid)
+		client.remote.client_msg(eid, data)
 
 class GameMgr:
 	def __init__(self):
 		self.games = {} # {gid: cid}
+
+	def game_ready(self, gameid, cid):
+		self.games[gameid] = cid
 
 	def serve(self):
 		gate_service = service.gen_service(game_to_gate.GameToGate())

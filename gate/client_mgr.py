@@ -10,7 +10,7 @@ from protocols import gate_to_client
 
 class Connection:
 	def __init__(self):
-		pass
+		self.gameid = None
 
 	def connection_made(self):
 		print('client connectin made')
@@ -27,8 +27,20 @@ class Connection:
 		game = server.game_mgr.get_free_game()
 		game.remote.client_connected(server.gid, self.cid)
 
+		self.gameid = server.gid
+
 	def create_client_entity(self, eid, name):
 		print('create client entity', eid)
+
+	def entity_msg(self, data):
+		print('entity_msg', len(data))
+
+		game = engine.server().game_mgr.get_game(self.gameid)
+		# send msg to game
+
+		eid = engine.server().cid2eid[self.cid]
+
+		game.remote.entity_msg(eid, data)
 
 class ClientMgr:
 	def __init__(self):

@@ -12,6 +12,13 @@ class Gate:
 
 		self.gid = engine.config()['gid']
 
+		self.eid2cid = {}
+		self.cid2eid = {}
+
+	def setup_connection(self, eid, cid):
+		self.eid2cid[eid] = cid
+		self.cid2eid[cid] = eid
+
 	def serve(self):
 		self.start_client_service()
 		self.start_game_service()
