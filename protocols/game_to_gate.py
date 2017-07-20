@@ -18,3 +18,10 @@ class GameToGate:
 		pdef('Eid', 'eid'),
 		pdef('Bytes', 'data'),
 	)
+
+	entity_msg_return = protocol(
+		pdef('Int', 'cid'),
+		pdef('Eid', 'eid'),
+		pdef('Token', 'token'),
+		pdef('Bytes', 'data'),
+	)

@@ -9,6 +9,7 @@ import asyncio
 from . import entity
 
 from utils import entity_mgr
+from utils import scheduler
 
 from network import client
 from network import service
@@ -40,18 +41,32 @@ class Connection:
 		entity._setup_server()
 
 	def client_msg(self, eid, data):
-		entity_mgr = engine.client().entity_mgr
+		client = engine.client()
+		entity_mgr = client.entity_mgr
 
 		entity = entity_mgr.get_entity(eid)
 
 		name, args = entity.type_infos.client_service.unpack(data)
-		getattr(entity, name)(*args)
+#		getattr(entity, name)(*args)
+
+		client.scheduler.schedule(eid, getattr(entity, name), args)
+
+	def entity_msg_return(self, eid, token, data):
+		client = engine.client()
+		entity_mgr = client.entity_mgr
+
+		entity = entity_mgr.get_entity(eid)
+
+		value = entity.type_infos.server_service.unpack_return(data)
+		client.scheduler.satisfy(token, value)
 
 class Client:
 	def __init__(self):
 		engine._client = self
 		self.prepare_environment()
 		self.setup_entity_mgr()
+
+		self.scheduler = scheduler.Scheduler()
 
 	def prepare_environment(self):
 		path = pathlib.Path(engine.game_config()['client_entity_path'])

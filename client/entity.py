@@ -13,9 +13,16 @@ class Server:
 		owner = self.owner
 
 		def _fun(*args, **kwds):
-			data = owner.type_infos.server_service.pack(name, *args, **kwds)
+			protocol = owner.type_infos.server_service.get_protocol_by_name(name)
+			data = protocol.pack(*args, **kwds)
+			client = engine.client()
+			if protocol.has_return():
+				token = client.scheduler.gen_token()
+				engine.client().client.remote.entity_msg_with_return(token, data )
 
-			engine.client().client.remote.entity_msg(data)
+				return client.scheduler.wait_for(owner.eid, token)
+			else:
+				engine.client().client.remote.entity_msg(data)
 
 		return _fun
 

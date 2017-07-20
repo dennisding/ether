@@ -10,12 +10,14 @@ from . import gate_mgr
 from . import game_mgr
 
 from utils import entity_mgr
+from utils import scheduler
 
 class Game:
 	def __init__(self):
 		engine._server = self
 
 	def serve(self):
+		self.init()
 		self.prepare_environment()
 		self.run_init_function()
 		self.setup_entity_mgr()
@@ -27,6 +29,9 @@ class Game:
 		self.game_mgr.connect_games()
 
 		self.run_forever()
+
+	def init(self):
+		self.scheduler = scheduler.Scheduler()
 
 	def prepare_environment(self):
 		path = pathlib.Path(engine.game_config()['entity_path'])

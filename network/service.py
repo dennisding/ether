@@ -20,8 +20,12 @@ class Protocol:
 
 		self.protocol = protocol
 		self.packer = None
+		self.return_packer = None
 
 		self.set_index_type(INDEX_TYPE)
+
+	def has_return(self):
+		return bool(self.return_packer)
 
 	def get_signature(self):
 		return ':n:%s:a:%s'%(self.name, self.protocol.arg_types)
@@ -30,11 +34,21 @@ class Protocol:
 		arg_types = '%s,%s'%(type_name, self.protocol.arg_types)
 		self.packer = auto_packer.compile(arg_types)
 
+		if self.protocol.pret:
+			return_types = '%s, %s'%(type_name, self.protocol.pret.value_type)
+			self.return_packer = auto_packer.compile(return_types)
+
 	def pack(self, *args, **kwds):
 		return self.packer.pack(self.index, *args)
 
 	def unpack(self, data):
 		return self.packer.unpack(data)[1:] # ignore the index
+
+	def pack_return(self, value):
+		return self.return_packer.pack(self.index, value)
+
+	def unpack_return(self, data):
+		return self.return_packer.unpack(data)[1]
 
 class Service:
 	def __init__(self, *services):
@@ -96,10 +110,12 @@ class Service:
 		self.name_to_protocols[name] = p
 		self.index_to_protocols[index] = p
 
+	def get_protocol_by_name(self, name):
+		return self.name_to_protocols.get(name)
+
 	def pack(self, name, *args, **kwds):
 		protocol = self.name_to_protocols[name]
 
-		data = protocol.pack(*args, **kwds)
 		return protocol.pack(*args, **kwds)
 
 	def unpack(self, data):
@@ -108,6 +124,17 @@ class Service:
 		protocol = self.index_to_protocols[index]
 
 		return protocol.name, protocol.unpack(data)
+
+	def pack_return(self, name, value):
+		protocol = self.name_to_protocols[name]
+		return protocol.pack_return(value)
+
+	def unpack_return(self, data):
+		result = self.index_packer.unpack(data)
+		index = self.index_packer.unpack(data)[0]
+
+		protocol = self.index_to_protocols[index]
+		return protocol.unpack_return(data)
 
 def gen_service(*services):
 	s = Service(*services)

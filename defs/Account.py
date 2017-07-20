@@ -3,18 +3,15 @@
 from network.protocol import protocol, pdef, pret
 
 class Property:
-	pass
+	hp = protocol( 'all_clients')
+	money = protocol('own_client')
 
 class Client:
 	become_player = protocol()
 
-	login_reply = protocol(
-		pdef('Bool', 'is_ok'),
-	)
-
-
 class Server:
 	login = protocol(
+		pret('Int', 'login_ok'),
 		pdef('Str', 'name'),
 		pdef('Str', 'password'),
 	)

@@ -37,6 +37,11 @@ class Connection:
 		client = engine.server().get_client(cid)
 		client.remote.client_msg(eid, data)
 
+	def entity_msg_return(self, cid, eid, token, data):
+		client = engine.server().get_client(cid)
+
+		client.remote.entity_msg_return(eid, token, data)
+
 class GameMgr:
 	def __init__(self):
 		self.games = {} # {gid: cid}

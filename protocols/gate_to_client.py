@@ -13,6 +13,12 @@ class GateToClient:
 		pdef('Bytes', 'data'),
 	)
 
+	entity_msg_return = protocol(
+		pdef('Eid', 'eid'),
+		pdef('Token', 'token'),
+		pdef('Bytes', 'data'),
+	)
+
 	# test code
 	login = protocol(
 		pdef('Bool', 'is_ok'),

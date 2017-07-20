@@ -212,6 +212,7 @@ def alias(alias_name, name):
 	g[alias_name] = eval(name)
 
 alias('Eid', 'Int()')
+alias('Token', 'Int()')
 
 if __name__ == '__main__':
 	pk = compile('Int, Str, List(Float), Set(Str), Map(Int, Str), Int')

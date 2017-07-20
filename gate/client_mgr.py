@@ -33,14 +33,18 @@ class Connection:
 		print('create client entity', eid)
 
 	def entity_msg(self, data):
-		print('entity_msg', len(data))
-
 		game = engine.server().game_mgr.get_game(self.gameid)
 		# send msg to game
 
 		eid = engine.server().cid2eid[self.cid]
 
 		game.remote.entity_msg(eid, data)
+
+	def entity_msg_with_return(self, token, data):
+		game = engine.server().game_mgr.get_game(self.gameid)
+
+		eid = engine.server().cid2eid[self.cid]
+		game.remote.entity_msg_with_return(eid, token, data)
 
 class ClientMgr:
 	def __init__(self):

@@ -38,13 +38,35 @@ class Connection:
 		entity.set_client(gateid, cid)
 
 	def entity_msg(self, eid, data):
-		entity_mgr = engine.server().entity_mgr
+		server = engine.server()
+		entity_mgr = server.entity_mgr
 
 		entity = entity_mgr.get_entity(eid)
 		name, args = entity.type_infos.server_service.unpack(data)
-		print('entity msg', name, args)
 
-		getattr(entity, name)(*args)
+		server.scheduler.schedule(eid, getattr(entity, name), args)
+
+	def entity_msg_with_return(self, eid, token, data):
+		server = engine.server()
+		entity_mgr = server.entity_mgr
+
+		entity = entity_mgr.get_entity(eid)
+		name, args = entity.type_infos.server_service.unpack(data)
+
+		def _task():
+			# pack the return
+			entity = entity_mgr.get_entity(eid)
+			if not entity:
+				return
+
+			result = getattr(entity, name)(*args)
+
+			data = entity.type_infos.server_service.pack_return(name, result)
+
+			gate = engine.server().get_gate(entity.gateid)
+			gate.remote.entity_msg_return(entity.cid, eid, token, data)
+
+		server.scheduler.schedule(eid, _task)
 
 class GateMgr:
 	def __init__(self):

@@ -7,6 +7,11 @@ class ClientToGate:
 		pdef('Bytes', 'data'),
 	)
 
+	entity_msg_with_return = protocol(
+		pdef('Token', 'token'),
+		pdef('Bytes', 'data'),
+	)
+
 	# test code
 	check = protocol(
 		pdef('Str', 'name'),
