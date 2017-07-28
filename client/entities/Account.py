@@ -10,7 +10,7 @@ class Account(entity.Entity):
 	def become_player(self):
 		print('client become player!')
 
-		if self.server.login('dennis', 'dennis11'):
+		if self.server.login('dennis', 'dennis'):
 			print('login ok!')
 		else:
 			print('login not ok!')

@@ -6,7 +6,24 @@ class Login:
 
 	def login(self, name, password):
 
+		avatar = self.create_avatar(name)
+
+#		if engine.stub('roll').is_online():
+#			pass
+
+		avatar = self.create_avatar(name)
+
 		return name == password
+
+	def create_avatar(self, name):
+		return
+		avatar = engine.create_local_entity('Avatar')
+
+		self.transfer_client_to(avatar)
+
+	def transfer_client_to(self, entity):
+		if not self._has_client():
+			return
 
 #		doc = db.find(name = 'dennis')
 #

@@ -15,8 +15,15 @@ gate2 = {
 }
 
 game1 = {
+	'ip' : '127.0.0.1',
 	'gport' : 6000,
 	'gid' : 3,
+	'stubs' : []
+}
+
+game2 = {
+	'gport' : 6010,
+	'gid' : 4,
 }
 
 client1 = {

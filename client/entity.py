@@ -18,9 +18,12 @@ class Server:
 			client = engine.client()
 			if protocol.has_return():
 				token = client.scheduler.gen_token()
-				engine.client().client.remote.entity_msg_with_return(token, data )
+				engine.client().client.remote.entity_msg_with_return(token, data)
 
-				return client.scheduler.wait_for(owner.eid, token)
+				def _filter(data):
+					return protocol.unpack_return(data)
+
+				return client.scheduler.wait_for(token, _filter)
 			else:
 				engine.client().client.remote.entity_msg(data)
 

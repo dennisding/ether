@@ -6,6 +6,7 @@ class Scheduler:
 	def __init__(self):
 		self.waiting = {} # {token:greenlet}
 		self.active_tasks = {} # {eid:set(greenlet)}
+		self.current_eid = None
 
 		self.last_token = 0
 
@@ -13,40 +14,44 @@ class Scheduler:
 		self.last_token = self.last_token + 1
 		return self.last_token
 
-	def clear(self, eid):
+	def clear_tasks(self, eid):
 		self.active_tasks.pop(eid, None)
 
+	def has_task(self, eid):
+		return bool(self.active_tasks.get(eid))
+
 	def schedule(self, eid, task, args = ()):
+		self.current_eid = eid or self.current_eid
+
 		g = greenlet.greenlet(task)
 
 		g.switch(*args)
 
-		if not g.dead:
-			self.add_active_task(eid, g)
-
-	def wait_for(self, eid, token):
+	def wait_for(self, token, filter = None):
+		filter = filter or (lambda data:data)
 		g = greenlet.getcurrent()
-		self.waiting[token] = g, eid
+		self.waiting[token] = g, self.current_eid, filter
+
+		if self.current_eid in self.active_tasks:
+			tasks = self.active_tasks[eid]
+		else:
+			tasks = set()
+
+		tasks.add(g)
+		self.active_tasks[self.current_eid] = tasks
 
 		return g.parent.switch()
-
-	def add_active_task(self, eid, g):
-		tasks = self.active_tasks.get(eid)
-		if tasks:
-			tasks.add(g)
-		else:
-			self.active_tasks[eid] = {g}
 
 	def satisfy(self, token, data):
 		info = self.waiting.pop(token, None)
 		if not info: # entity task has been clear, ignore it
 			return
 
-		g, eid = info
+		g, eid, filter = info
 
-		g.switch(data)
+		self.current_eid = eid
 
-		if not g.dead:
-			self.add_active_task(eid, g)
-		else:
-			self.active_tasks[eid].remove(g)
+		if eid in self.active_tasks:
+			self.active_tasks[eid].discard(g)
+
+		g.switch(filter(data))

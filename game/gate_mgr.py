@@ -63,8 +63,8 @@ class Connection:
 
 			data = entity.type_infos.server_service.pack_return(name, result)
 
-			gate = engine.server().get_gate(entity.gateid)
-			gate.remote.entity_msg_return(entity.cid, eid, token, data)
+			gate = engine.server().get_gate(entity.stub.gateid)
+			gate.remote.entity_msg_return(entity.stub.cid, eid, token, data)
 
 		server.scheduler.schedule(eid, _task)
 

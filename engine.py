@@ -9,6 +9,9 @@ _client = None
 def init():
 	pass
 
+def gid():
+	return _config['gid']
+
 def config():
 	return _config
 
@@ -23,3 +26,6 @@ def client():
 
 def args():
 	return _args
+
+def defer(arg1 = None, arg2 = None):
+	_server.defer(arg1, arg2)

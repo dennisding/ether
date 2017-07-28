@@ -22,9 +22,9 @@ class OwnClient(ClientBase):
 
 	def _do_send(self, data):
 		owner = self.owner
-		gate = engine.server().get_gate(owner.gateid)
+		gate = engine.server().get_gate(owner.stub.gateid)
 
-		gate.remote.client_msg(owner.cid, owner.eid, data)
+		gate.remote.client_msg(owner.stub.cid, owner.eid, data)
 
 class AllClients(ClientBase):
 	def __init__(self, owner):

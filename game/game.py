@@ -26,6 +26,7 @@ class Game:
 		self.game_mgr = game_mgr.GameMgr()
 
 		self.gate_mgr.connect_gates()
+		self.game_mgr.start_game_service()
 		self.game_mgr.connect_games()
 
 		self.run_forever()
@@ -62,6 +63,13 @@ class Game:
 		entity_path = game_config['entity_path']
 
 		self.entity_mgr.prepare_entities(def_path, entity_path, entity.LocalEntity)
+
+	def defer(self, arg1 = None, arg2 = None):
+		loop = asyncio.get_event_loop()
+		if callable(arg1):
+			asyncio.call_soon(arg1)
+		else:
+			asyncio.call_later(arg1, arg2)
 
 	def run_forever(self):
 		loop = asyncio.get_event_loop()

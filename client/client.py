@@ -53,12 +53,7 @@ class Connection:
 
 	def entity_msg_return(self, eid, token, data):
 		client = engine.client()
-		entity_mgr = client.entity_mgr
-
-		entity = entity_mgr.get_entity(eid)
-
-		value = entity.type_infos.server_service.unpack_return(data)
-		client.scheduler.satisfy(token, value)
+		client.scheduler.satisfy(token, data)
 
 class Client:
 	def __init__(self):
