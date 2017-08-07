@@ -36,10 +36,6 @@ class Connection:
 		entity_mgr = engine.client().entity_mgr
 		entity_mgr.create_entity(name, eid = eid)
 
-		entity = entity_mgr.get_entity(eid)
-
-		entity._setup_server()
-
 	def client_msg(self, eid, data):
 		client = engine.client()
 		entity_mgr = client.entity_mgr

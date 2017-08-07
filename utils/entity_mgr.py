@@ -3,6 +3,8 @@
 import inspect
 import pathlib
 
+from . import entity_utils
+
 from network import service
 
 class TypeInfos:
@@ -17,16 +19,9 @@ class EntityMgr:
 		self.type_infos = {} # { name : TypeInfos}
 		self.entities = {} # {eid:entity}
 		self.defs = {} # {name:defs}
-		self.protocol_path = ''
-
-		self.last_eid = 0
 
 	def gen_eid(self):
-		self.last_eid = self.last_eid + 1
-		return self.last_eid
-
-	def set_protocol_path(self, path):
-		self.protocol_path = path
+		return entity_utils.gen_eid()
 
 	def prepare_entities(self, def_path, entity_path, BaseType):
 		self.iter_py_files(def_path, self.gen_def)
@@ -34,6 +29,17 @@ class EntityMgr:
 		def _gen_type(name):
 			self.gen_type(name, BaseType)
 		self.iter_py_files(entity_path, _gen_type)
+
+	def get_type_infos(self, name):
+		return self.type_infos[name]
+
+	def get_entity_type_list(self, fun):
+		result = []
+		for key, value in self.type_infos.items():
+			if fun(value.Type):
+				result.append(key)
+
+		return result
 
 	def gen_def(self, name):
 		module = {}
@@ -67,6 +73,14 @@ class EntityMgr:
 
 			callback(name)
 
+	def get_type_list(self, BaseType):
+		result = []
+		for name, type_infos in self.type_infos.items():
+			if issubclass(type_infos.Type, BaseType):
+				result.append(name)
+
+		return result
+
 	def gen_type(self, name, BaseType):
 		module = __import__(name.stem)
 		for name, attr in inspect.getmembers(module, inspect.isclass):
@@ -76,6 +90,8 @@ class EntityMgr:
 
 	def setup_type_infos(self, name, attr):
 		defs = self.defs.get(name)
+		if not defs:
+			defs = None, None
 
 		self.type_infos[name] = TypeInfos(name, attr, defs[0], defs[1])
 
@@ -99,5 +115,7 @@ class EntityMgr:
 		entity.__init__()
 
 		self.entities[eid] = entity
+
+		entity.on_created()
 
 		return eid

@@ -8,7 +8,7 @@ def extract_gadgets(namespace, funcs, items):
 		if name.startswith('__') and name.endswith('__') and name != '__init__':
 			continue
 
-		if not inspect.isfunction(attr):
+		if not (inspect.isfunction(attr) or inspect.ismethoddescriptor(attr)):
 			assert name not in namespace
 			namespace[name] = attr
 			continue

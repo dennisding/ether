@@ -13,6 +13,17 @@ def setup_game_config():
 		exec(content, config)
 		engine._game_config = config
 
+def setup_common_config(configs):
+	common = configs.get('common', {})
+
+	for key, config in configs.items():
+		if not isinstance(config, dict) or key == 'common':
+			continue
+
+		for ckey, cvalue in common.items():
+			if ckey not in config:
+				config[ckey] = cvalue
+
 def setup_config():
 	args = engine.args()
 
@@ -21,17 +32,15 @@ def setup_config():
 		config = {}
 		exec(content, config)
 
+		setup_common_config(config)
+
 		# setup common
 		result = dict(config[args.name])
 		result['name'] = args.name
 
-		def add_config(configs):
-			for key, value in configs.items():
-				if key not in result and key != '__builtins__':
-					result[key] = value
-
-		add_config(config.get('common', {}))
-		add_config(config)
+		for key, value in config.items():
+			if key not in result and key != '__builtins__':
+				result[key] = value
 
 		engine._config = result
 

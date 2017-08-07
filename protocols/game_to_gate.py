@@ -8,8 +8,8 @@ class GameToGate:
 	)
 
 	create_player_client = protocol(
-		pdef('Eid', 'eid'),
 		pdef('Int', 'cid'),
+		pdef('Eid', 'eid'),
 		pdef('Str', 'name'),
 	)
 

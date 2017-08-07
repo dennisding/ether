@@ -33,7 +33,7 @@ class Scheduler:
 		self.waiting[token] = g, self.current_eid, filter
 
 		if self.current_eid in self.active_tasks:
-			tasks = self.active_tasks[eid]
+			tasks = self.active_tasks[self.current_eid]
 		else:
 			tasks = set()
 

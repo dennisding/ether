@@ -6,18 +6,28 @@ import engine
 from . import client_mgr
 from . import game_mgr
 
+class EntityInfo:
+	def __init__(self, eid, cid = 0, gameid = 0):
+		self.eid = eid
+		self.cid = cid
+		self.gameid = gameid
+
 class Gate:
 	def __init__(self):
 		engine._server = self
 
 		self.gid = engine.config()['gid']
 
-		self.eid2cid = {}
-		self.cid2eid = {}
+		self.entity_infos = {}  # {eid:infos}
+		self.client_infos = {} # {cid : infos}
 
-	def setup_connection(self, eid, cid):
-		self.eid2cid[eid] = cid
-		self.cid2eid[cid] = eid
+	def on_entity_created(self, eid, cid, gameid):
+		infos = EntityInfo(eid, cid, gameid)
+		assert eid not in self.entity_infos
+		assert cid not in self.client_infos
+
+		self.entity_infos[eid] = infos
+		self.client_infos[cid] = infos
 
 	def serve(self):
 		self.start_client_service()

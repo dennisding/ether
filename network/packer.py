@@ -96,7 +96,7 @@ class FixedBytes:
 	def __init__(self, size):
 		self.size = size
 
-	def pack_info(self, buff_list, value):
+	def pack_into(self, buff_list, value):
 		assert(len(value) == self.size)
 		buff_list.append(value)
 
@@ -211,7 +211,8 @@ def alias(alias_name, name):
 	assert alias_name not in g
 	g[alias_name] = eval(name)
 
-alias('Eid', 'Int()')
+#alias('Eid', 'Int()')
+alias('Eid', 'FixedBytes(12)')
 alias('Token', 'Int()')
 
 if __name__ == '__main__':

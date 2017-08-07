@@ -1,25 +1,26 @@
 # -*- encoding:utf-8 -*-
 
+import engine
+
 class Login:
-	def __init__(self):
-		pass
+#	def __init__(self):
+#		pass
 
 	def login(self, name, password):
 
-		avatar = self.create_avatar(name)
+#		avatar = self.create_avatar(name)
 
-#		if engine.stub('roll').is_online():
-#			pass
+		if engine.stubs.OnlineStub.is_online(name):
+			print('login is online!')
+			return False
 
-		avatar = self.create_avatar(name)
+#		avatar = self.create_avatar(name)
 
-		return name == password
-
-	def create_avatar(self, name):
-		return
-		avatar = engine.create_local_entity('Avatar')
-
-		self.transfer_client_to(avatar)
+		if name == password:
+			engine.stubs.OnlineStub.set_online(name)
+			return True
+		else:
+			return False
 
 	def transfer_client_to(self, entity):
 		if not self._has_client():

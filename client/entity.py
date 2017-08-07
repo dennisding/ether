@@ -33,5 +33,6 @@ class Entity(metaclass = entity_utils.EntityMeta):
 	def __init__(self):
 		pass
 
-	def _setup_server(self):
+	def on_created(self):
 		self.server = Server(self)
+

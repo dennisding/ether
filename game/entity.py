@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 
+import engine
+
 from . import clients
 from . import entity_tools
 
@@ -20,7 +22,7 @@ class Stub:
 		self.gameid = gameid
 
 class LocalEntity(metaclass = entity_utils.EntityMeta):
-	stub = Stub()
+	stub = swallow.swallow()
 
 	all_clients = swallow.swallow()
 	own_client = swallow.swallow()
@@ -29,12 +31,18 @@ class LocalEntity(metaclass = entity_utils.EntityMeta):
 	def __init__(self):
 		pass
 
+	def on_created(self):
+		gameid = engine.config()['gid']
+
+		self.stub = Stub(gameid = gameid)
+
 	def set_client(self, gateid, cid):
 		if not (gateid and cid):
 			self.stub.set_client()
 			return
 
 		self.stub.set_client(gateid, cid)
+
 		# create the client entity
 		entity_tools.create_player_client(self)
 
@@ -50,6 +58,13 @@ class Entity(LocalEntity):
 	def __init__(self):
 		pass
 
-class Stub(LocalEntity):
+class StubEntity(LocalEntity):
 	def __init__(self):
 		pass
+
+	def on_created(self):
+		super().on_created()
+		# create proxy on all games
+		name = self.type_infos.name
+
+		engine.all_games.create_stub_proxy(self.eid, name, self.stub.gameid)

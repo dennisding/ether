@@ -40,6 +40,9 @@ class Client(asyncio.Protocol):
 
 		self.transport.write(data)
 
+	def raw_send(self, data):
+		self.transport.write(self.send_filter.filter(data))
+
 	def parse_options(self, options):
 		self.options = set()
 		for token in re.split('[ ,]', options):

@@ -35,9 +35,10 @@ dbmgr1 = {
 
 common = {
 	# 'name' : 'common', # set by setup_config
+	'ip' : '127.0.0.1',
 	'net_option' : 'zip pack big',
 }
 
 active_gates = [gate1]
-active_games = [game1]
+active_games = [game1, game2]
 active_dbmgrs = []

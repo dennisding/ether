@@ -11,7 +11,7 @@ from protocols import game_to_gate
 
 class Connection:
 	def __init__(self):
-		pass
+		self.gameid = None
 
 	def connection_made(self):
 		print('game connection made')
@@ -23,15 +23,16 @@ class Connection:
 		print('game connection ready')
 
 	def game_server_ready(self, gameid):
+		self.gameid = gameid
 		engine.server().game_mgr.game_ready(gameid, self.cid)
 
 	def create_player_client(self, cid, eid, name):
-		print('create client entity', cid, eid, name)
+		print('create client entity', cid, eid, name, self.gameid)
 
 		client = engine.server().get_client(cid)
 		client.remote.create_player_client(eid, name)
 
-		engine.server().setup_connection(eid, cid)
+		engine.server().on_entity_created(eid, cid, self.gameid)
 
 	def client_msg(self, cid, eid, data):
 		client = engine.server().get_client(cid)
@@ -63,7 +64,7 @@ class GameMgr:
 		games = list(self.server.connections.values())
 		return random.choice(games)
 
-	def get_game(self, gid):
-		cid = self.games[gid]
+	def get_game(self, gameid):
+		cid = self.games[gameid]
 
 		return self.server.get_connection(cid)

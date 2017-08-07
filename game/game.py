@@ -8,6 +8,7 @@ import engine
 from . import entity
 from . import gate_mgr
 from . import game_mgr
+from . import stub_mgr
 
 from utils import entity_mgr
 from utils import scheduler
@@ -24,12 +25,19 @@ class Game:
 
 		self.gate_mgr = gate_mgr.GateMgr()
 		self.game_mgr = game_mgr.GameMgr()
+		self.stub_mgr = stub_mgr.StubMgr()
+
+		self.prepare_engine()
 
 		self.gate_mgr.connect_gates()
 		self.game_mgr.start_game_service()
 		self.game_mgr.connect_games()
 
 		self.run_forever()
+
+	def prepare_engine(self):
+		engine.stubs = self.stub_mgr
+		engine.all_games = self.game_mgr.gen_all_game()
 
 	def init(self):
 		self.scheduler = scheduler.Scheduler()
