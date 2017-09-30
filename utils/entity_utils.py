@@ -7,7 +7,10 @@ class EntityMeta(type):
 	def __new__(cls, name, bases, namespace, **kwds):
 		namespace = assemble.assemble_components(namespace)
 
-		return type.__new__(cls, name, bases, namespace)
+		new_type = type.__new__(cls, name, bases, namespace)
+
+		type_info.gen_type_info(new_type)
+		return new_type
 
 def gen_eid():
 	# the length from mongodb's objectid

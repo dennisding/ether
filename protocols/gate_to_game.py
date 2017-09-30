@@ -8,6 +8,10 @@ class GateToGame:
 		pdef('Int', 'cid')
 	)
 
+	client_lost = protocol(
+		pdef('Eid', 'eid'),
+	)
+
 	entity_msg = protocol(
 		pdef('Eid', 'eid'),
 		pdef('Bytes', 'data'),

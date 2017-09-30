@@ -5,6 +5,7 @@ init_fun = 'main.init'
 entity_path = 'entities'
 
 connect_entity = 'Account'
+global_entity = 'Global'
 
 max_aoi = 80 # max aoi in meter
 

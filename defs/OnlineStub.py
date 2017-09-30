@@ -2,9 +2,11 @@
 
 from network.protocol import protocol, pdef, pret
 
-class Property:
-	hp = protocol( 'all_clients')
-	money = protocol('own_client')
+from common import attr
+from common import gtypes
+
+class Property(gtypes.EntityAttribute):
+	pass
 
 class Server:
 	is_online = protocol(
@@ -14,4 +16,9 @@ class Server:
 
 	set_online = protocol(
 		pdef('Str', 'name'),
+	)
+
+	try_set_online = protocol(
+		pret('Bool', 'is_online'),
+		pdef('Str', 'name')
 	)

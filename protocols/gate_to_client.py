@@ -28,3 +28,8 @@ class GateToClient:
 		pdef('Str', 'name'),
 		pdef('Str', 'info')
 	)
+
+	send_entity_defs = protocol(
+		pdef('Bytes', 'client_defs'),
+		pdef('Bytes', 'server_defs'),
+	)

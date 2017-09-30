@@ -4,6 +4,8 @@ import engine
 
 from game import entity
 
+from utils import entity_utils
+
 class Proxy:
 	def __init__(self, eid, name, gameid, type_infos):
 		self.eid = eid
@@ -75,7 +77,11 @@ class StubMgr:
 		print('create stub proxy', eid, name, gameid)
 		type_infos = engine.entity_mgr().get_type_infos(name)
 
-		self.stubs[name] = Proxy(eid, name, gameid, type_infos)
+		proxy = Proxy(eid, name, gameid, type_infos)
+		self.stubs[name] = proxy
+		stub_name = getattr(type_infos.Type, '_stub_name', None)
+		if stub_name:
+			self.stubs[stub_name] = proxy
 
 	def create_stub(self, name):
 		print('create stub', name)
@@ -83,7 +89,13 @@ class StubMgr:
 
 		eid = entity_mgr.create_entity(name)
 
-		self.stubs[name] = entity_mgr.get_entity(eid)
+		entity = entity_mgr.get_entity(eid)
+		self.stubs[name] = entity
+
+		stub_name = getattr(entity, '_stub_name', None)
+		if stub_name:
+			assert stub_name not in self.stubs
+			self.stubs[stub_name] = entity
 
 	def __getattr__(self, name):
 		if name not in self.stubs:

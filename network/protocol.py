@@ -29,3 +29,8 @@ class pret:
 	def __init__(self, value_type, name):
 		self.value_type = value_type
 		self.name = name
+
+class attr:
+	def __init__(self, value_type, options):
+		self.value_type = value_type
+		self.options = options

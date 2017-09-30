@@ -33,11 +33,17 @@ def client():
 def args():
 	return _args
 
-def defer(arg1 = None, arg2 = None):
-	_server.defer(arg1, arg2)
+def callback(arg1 = None, arg2 = None):
+	_server.callback(arg1, arg2)
 
 def get_entity(eid):
 	return _server.entity_mgr.get_entity(eid)
+
+def del_entity(eid):
+	_server.entity_mgr.del_entity(eid)
+
+def create_entity(*args, **kwds):
+	return _server.entity_mgr.create_entity(*args, **kwds)
 
 def scheduler():
 	return _server.scheduler

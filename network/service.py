@@ -3,7 +3,7 @@
 import asyncio
 import hashlib
 
-from .protocol import protocol, pdef
+from .protocol import protocol, pdef, attr
 from . import auto_packer
 
 INDEX_TYPE = 'ShortInt'
@@ -97,6 +97,11 @@ class Service:
 			value = getattr(service, name)
 			if isinstance(value, protocol):
 				self.add_protocol(name, value, digest)
+			elif isinstance(value, attr):
+				self.add_attr(name, value, digest)
+
+	def add_attr(self, name, value, digest):
+		pass
 
 	def add_protocol(self, name, protocol, digest):
 		assert name not in self.name_to_protocols

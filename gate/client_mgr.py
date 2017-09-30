@@ -18,6 +18,11 @@ class Connection:
 	def connection_lost(self):
 		print('client connection lost')
 
+		info = engine.server().client_infos[self.cid]
+
+		game = engine.server().game_mgr.get_game(info.gameid)
+		game.remote.client_lost(info.eid)
+
 	def connection_ready(self):
 		print('client connection ready')
 		# 1. pick a free game

@@ -40,5 +40,5 @@ common = {
 }
 
 active_gates = [gate1]
-active_games = [game1, game2]
+active_games = [game1]
 active_dbmgrs = []

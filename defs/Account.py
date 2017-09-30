@@ -2,9 +2,15 @@
 
 from network.protocol import protocol, pdef, pret
 
-class Property:
-	hp = protocol( 'all_clients')
-	money = protocol('own_client')
+from common import attr
+from common import gtypes
+
+class Package(gtypes.Attribute):
+	count = attr.attr(gtypes.Int)
+
+class Property(gtypes.EntityAttribute):
+	hp = attr.attr(gtypes.Int)
+	package = attr.attr(Package)
 
 class Client:
 	become_player = protocol()

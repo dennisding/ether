@@ -36,6 +36,11 @@ class LocalEntity(metaclass = entity_utils.EntityMeta):
 
 		self.stub = Stub(gameid = gameid)
 
+	def on_destroyed(self):
+		engine.server().scheduler.clear_tasks(self.eid)
+
+		self.__dict__.clear()
+
 	def set_client(self, gateid, cid):
 		if not (gateid and cid):
 			self.stub.set_client()
@@ -49,7 +54,7 @@ class LocalEntity(metaclass = entity_utils.EntityMeta):
 		# setup clients
 		self.own_client = clients.OwnClient(self)
 		self.all_clients = clients.AllClients(self)
-		self.other_client = clients.OtherClients(self)
+		self.other_clients = clients.OtherClients(self)
 
 		# become player
 		self.own_client.become_player()

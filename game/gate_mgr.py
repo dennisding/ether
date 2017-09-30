@@ -25,30 +25,36 @@ class Connection:
 
 		self.remote.game_server_ready(engine.gid())
 
+	def client_lost(self, eid):
+		print('client lost', eid)
+		engine.del_entity(eid)
+
 	def client_connected(self, gateid, cid):
 		# 1. create entity
 		# 2. bind the entity to client
 		print('client connected!!!', gateid, cid)
-		entity_mgr = engine.server().entity_mgr
+
+		# send entity defs
+		gate = engine.server().get_gate(gateid)
+		client_defs, server_defs = engine.entity_mgr().get_entity_defs()
+		gate.remote.send_entity_defs(cid, client_defs, server_defs)
 
 		connect_entity = engine.game_config()['connect_entity']
-		eid = entity_mgr.create_entity(connect_entity)
+		eid = engine.create_entity(connect_entity)
 
-		entity = entity_mgr.get_entity(eid)
+		entity = engine.get_entity(eid)
 		entity.set_client(gateid, cid)
 
 	def entity_msg(self, eid, data):
 		server = engine.server()
-		entity_mgr = server.entity_mgr
 
-		entity = entity_mgr.get_entity(eid)
+		entity = engine.get_entity(eid)
 		name, args = entity.type_infos.server_service.unpack(data)
 
 		server.scheduler.schedule(eid, getattr(entity, name), args)
 
 	def entity_msg_with_return(self, eid, token, data):
 		server = engine.server()
-		entity_mgr = server.entity_mgr
 
 		entity = engine.get_entity(eid)
 
@@ -56,7 +62,7 @@ class Connection:
 
 		def _task():
 			# pack the return
-			entity = entity_mgr.get_entity(eid)
+			entity = engine.get_entity(eid)
 			if not entity:
 				return
 

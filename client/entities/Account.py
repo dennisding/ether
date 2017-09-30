@@ -8,9 +8,14 @@ class Account(entity.Entity):
 		print('client account created!!!')
 
 	def become_player(self):
-		print('client become player!')
+		self.server.login(1, 1)
+#		print('client become player!')
+#
+#		if self.server.login('dennis1', 'dennis1'):
+#			print('login ok!')
+#		else:
+#			print('login failed!!!!!!')
 
-		if self.server.login('dennis2', 'dennis2'):
-			print('login ok!')
-		else:
-			print('login not ok!')
+	@rpc.rpc('Int, Int')
+	def test(self, int1, int2):
+		print('server to client test', int1, int2)

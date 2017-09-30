@@ -25,3 +25,9 @@ class GameToGate:
 		pdef('Token', 'token'),
 		pdef('Bytes', 'data'),
 	)
+
+	send_entity_defs = protocol(
+		pdef('Int', 'cid'),
+		pdef('Bytes', 'client_defs'),
+		pdef('Bytes', 'server_defs'),
+	)

@@ -72,7 +72,7 @@ class Game:
 
 		self.entity_mgr.prepare_entities(def_path, entity_path, entity.LocalEntity)
 
-	def defer(self, arg1 = None, arg2 = None):
+	def callback(self, arg1 = None, arg2 = None):
 		loop = asyncio.get_event_loop()
 		if callable(arg1):
 			asyncio.call_soon(arg1)

@@ -29,6 +29,7 @@ class Connection:
 
 	def connection_ready(self):
 		print('connection ready')
+		# send entity def
 
 	def create_player_client(self, eid, name):
 		print('create client entity', eid, name)
@@ -51,6 +52,9 @@ class Connection:
 		client = engine.client()
 		client.scheduler.satisfy(token, data)
 
+	def send_entity_defs(self, client_defs, server_defs):
+		engine.entity_mgr().set_entity_defs(client_defs, server_defs)
+
 class Client:
 	def __init__(self):
 		engine._client = self
@@ -58,6 +62,9 @@ class Client:
 		self.setup_entity_mgr()
 
 		self.scheduler = scheduler.Scheduler()
+
+	def entity_msg(self, data):
+		self.client.remote.entity_msg(data)
 
 	def prepare_environment(self):
 		path = pathlib.Path(engine.game_config()['client_entity_path'])
@@ -71,6 +78,8 @@ class Client:
 		entity_path = game_config['client_entity_path']
 
 		self.entity_mgr.prepare_entities(def_path, entity_path, entity.Entity)
+
+		engine._entity_mgr = self.entity_mgr
 
 	def connect_to_gate(self):
 		client_service = service.gen_service(gate_to_client.GateToClient())
